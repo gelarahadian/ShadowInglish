@@ -1,0 +1,21 @@
+import Button from "../ui/Button";
+
+export default function Cta() {
+  return (
+    <section className="bg-gray-50 dark:bg-gray-900">
+      <div className="container mx-auto px-4 py-12 sm:px-6 lg:flex lg:items-center lg:justify-between lg:px-8 lg:py-16">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
+          <span className="block">Ready to dive in?</span>
+          <span className="block text-blue-600">
+            Start your free trial today.
+          </span>
+        </h2>
+        <div className="mt-8 flex lg:mt-0 lg:flex-shrink-0">
+          <div className="inline-flex rounded-md shadow">
+            <Button>Start Your Free Trial</Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
