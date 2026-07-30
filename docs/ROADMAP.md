@@ -2,7 +2,7 @@ MVP
 
 ✅ Landing Page
 
-⬜ Authentication
+✅ Authentication
 
 ⬜ Official Lesson
 

@@ -14,6 +14,18 @@ import { Label } from "@/components/ui/label";
 import { createClient } from "@/lib/supabase/client";
 
 export function RegisterForm() {
+  const getURL = () => {
+    let url =
+      process?.env?.NEXT_PUBLIC_SITE_URL ?? // Set this to your site URL in production
+      process?.env?.NEXT_PUBLIC_VERCEL_URL ?? // Automatically set by Vercel
+      'http://localhost:3000/';
+    // Make sure to include `https` in production
+    url = url.includes('http') ? url : `https://${url}`;
+    // Make sure to include a trailing `/`
+    url = url.charAt(url.length - 1) === '/' ? url : `${url}/`;
+    return url;
+  };
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
@@ -31,7 +43,7 @@ export function RegisterForm() {
           first_name: firstName,
           last_name: lastName,
         },
-        emailRedirectTo: `${location.origin}/auth/callback`,
+        emailRedirectTo: `${getURL()}auth/callback`,
       },
     });
 
@@ -48,7 +60,7 @@ export function RegisterForm() {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${location.origin}/auth/callback`,
+        redirectTo: `${getURL()}auth/callback`,
       },
     });
 
