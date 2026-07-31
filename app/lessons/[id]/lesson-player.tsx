@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import ReactPlayer from "react-player";
 import {
   Accordion,
   AccordionContent,
@@ -8,14 +9,78 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import { Lesson } from "@/types/lesson";
+import {
+  Play,
+  Pause,
+  Rewind,
+  FastForward,
+  Mic,
+  StopCircle,
+} from "lucide-react";
 
 export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const [currentSentenceIndex, setCurrentSentenceIndex] = useState(0);
+  const [isClient, setIsClient] = useState(false);
+  const [speed, setSpeed] = useState(1);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const playerRef = useRef<ReactPlayer>(null);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const handleNextSentence = () => {
     if (currentSentenceIndex < lesson.sentences.length - 1) {
       setCurrentSentenceIndex(currentSentenceIndex + 1);
+    }
+  };
+
+  const handlePreviousSentence = () => {
+    if (currentSentenceIndex > 0) {
+      setCurrentSentenceIndex(currentSentenceIndex - 1);
+    }
+  };
+
+  const handlePlayModelAudio = () => {
+    if (typeof window !== "undefined" && window.speechSynthesis) {
+      const utterance = new SpeechSynthesisUtterance(
+        activeSentence?.text ?? ""
+      );
+      utterance.rate = speed;
+      utterance.onstart = () => setIsPlaying(true);
+      utterance.onend = () => setIsPlaying(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  };
+
+  const handleRecord = async () => {
+    if (isRecording) {
+      mediaRecorderRef.current?.stop();
+      setIsRecording(false);
+    } else {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      mediaRecorder.start();
+
+      const chunks: Blob[] = [];
+      mediaRecorder.ondataavailable = (event) => {
+        chunks.push(event.data);
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(chunks, { type: "audio/wav" });
+        // You can now do something with the audioBlob, e.g., play it or upload it
+        console.log("Recording stopped, audio blob:", audioBlob);
+        setAudioChunks(chunks); // Save chunks if you want to replay
+      };
+
+      setIsRecording(true);
     }
   };
 
@@ -30,11 +95,44 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
         {/* Left Column */}
         <div>
           <div className="aspect-video bg-gray-200 dark:bg-gray-800 flex items-center justify-center rounded-lg">
-            <p>Video Player Placeholder</p>
+            {isClient && lesson.video_url && (
+              <ReactPlayer
+                ref={playerRef}
+                url={lesson.video_url}
+                width="100%"
+                height="100%"
+                controls
+                playing={isPlaying}
+                playbackRate={speed}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              />
+            )}
           </div>
           <div className="mt-4">
-            <h2 className="text-lg font-semibold">Lesson Controls</h2>
-            {/* Add lesson controls here */}
+            <h2 className="text-lg font-semibold mb-2">Lesson Controls</h2>
+            <div className="flex items-center gap-4">
+              <Button onClick={handlePreviousSentence} size="icon">
+                <Rewind />
+              </Button>
+              <Button onClick={() => setIsPlaying(!isPlaying)} size="icon">
+                {isPlaying ? <Pause /> : <Play />}
+              </Button>
+              <Button onClick={handleNextSentence} size="icon">
+                <FastForward />
+              </Button>
+              <div className="flex-grow flex items-center gap-2">
+                <span>Speed</span>
+                <Slider
+                  min={0.5}
+                  max={2}
+                  step={0.25}
+                  value={[speed]}
+                  onValueChange={(value) => setSpeed(value[0])}
+                />
+                <span>{speed}x</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -46,8 +144,21 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
               {activeSentence?.text ?? "No sentences found."}
             </p>
             <div className="flex gap-4">
-              <Button variant="default">Play (Model Audio)</Button>
-              <Button variant="destructive">Record (Your Shadowing)</Button>
+              <Button
+                onClick={handlePlayModelAudio}
+                disabled={isPlaying}
+                className="flex items-center gap-2"
+              >
+                <Play /> Play (Model Audio)
+              </Button>
+              <Button
+                onClick={handleRecord}
+                variant={isRecording ? "secondary" : "destructive"}
+                className="flex items-center gap-2"
+              >
+                {isRecording ? <StopCircle /> : <Mic />}
+                {isRecording ? "Stop Recording" : "Record (Your Shadowing)"}
+              </Button>
             </div>
           </div>
         </div>
@@ -58,30 +169,17 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
         <Accordion type="single" collapsible>
           <AccordionItem value="item-1">
             <AccordionTrigger>Translation</AccordionTrigger>
-            <AccordionContent>
-              {/* Translation content goes here */}
-              Translation placeholder.
-            </AccordionContent>
+            <AccordionContent>Translation placeholder.</AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-2">
             <AccordionTrigger>Vocabulary</AccordionTrigger>
-            <AccordionContent>
-              {/* Vocabulary content goes here */}
-              Vocabulary placeholder.
-            </AccordionContent>
+            <AccordionContent>Vocabulary placeholder.</AccordionContent>
           </AccordionItem>
           <AccordionItem value="item-3">
             <AccordionTrigger>Shadowing Tips</AccordionTrigger>
-            <AccordionContent>
-              {/* Shadowing tips content goes here */}
-              Shadowing tips placeholder.
-            </AccordionContent>
+            <AccordionContent>Shadowing tips placeholder.</AccordionContent>
           </AccordionItem>
         </Accordion>
-      </div>
-
-      <div className="mt-8 text-center">
-        <Button onClick={handleNextSentence}>Next Sentence</Button>
       </div>
     </div>
   );
