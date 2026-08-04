@@ -12,7 +12,7 @@ const importSchema = z.object({
 });
 
 const assemblyai = new AssemblyAI({
-  apiKey: process.env.ASSEMBLYAI_API_KEY,
+  apiKey: process.env.ASSEMBLYAI_API_KEY as string,
 });
 
 export async function POST(request: Request) {
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
     if (transcript.status === 'error') {
       throw new Error(`Transcription failed: ${transcript.error}`);
     }
-    if (!transcript.sentences || transcript.sentences.length === 0) {
+    if (!(transcript as any).sentences || (transcript as any).sentences.length === 0) {
       throw new Error('Could not extract any sentences from the video.');
     }
 
@@ -76,7 +76,7 @@ export async function POST(request: Request) {
     }
 
     // 4. Prepare and save sentences
-    const sentencesToInsert = transcript.sentences.map((sentence, index) => ({
+    const sentencesToInsert = (transcript as any).sentences.map((sentence: any, index: number) => ({
       lesson_id: lessonData.id,
       text: sentence.text,
       order: index,

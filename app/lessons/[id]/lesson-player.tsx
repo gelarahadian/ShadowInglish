@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import ReactPlayer from "react-player";
+import dynamic from "next/dynamic";
+const ReactPlayer = dynamic(() => import("react-player"), { ssr: false }) as any;
 import {
   Accordion,
   AccordionContent,
@@ -31,7 +32,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const [feedbackStatus, setFeedbackStatus] = useState<Record<number, 'good' | 'practice'>>({});
   const [transcriptionResult, setTranscriptionResult] = useState<{ text: string; score: number } | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const playerRef = useRef<ReactPlayer>(null);
+  const playerRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
@@ -152,7 +153,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
             <div className="aspect-video bg-gray-200 flex items-center justify-center rounded-lg">
               {isClient && (
                 <ReactPlayer
-                  ref={playerRef}
+                  ref={playerRef as any}
                   url={lesson.video_url}
                   width="100%"
                   height="100%"
