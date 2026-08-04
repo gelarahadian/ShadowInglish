@@ -87,6 +87,13 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
         mediaRecorderRef.current = mediaRecorder;
         mediaRecorder.start();
 
+        // Auto-stop after 10 seconds
+        setTimeout(() => {
+          if (mediaRecorder.state === "recording") {
+            handleRecord(); // This will trigger the stop logic
+          }
+        }, 10000);
+
         const chunks: Blob[] = [];
         mediaRecorder.ondataavailable = (event) => {
           chunks.push(event.data);
@@ -233,7 +240,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
               <Button
                 onClick={handleRecord}
                 variant={isRecording ? "secondary" : "destructive"}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 border border-black"
               >
                 {isRecording ? <StopCircle /> : <Mic />}
                 {isRecording ? "Stop Recording" : isTranscribing ? "Transcribing..." : "Record (Your Shadowing)"}
