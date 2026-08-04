@@ -149,7 +149,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
         {/* Left Column */}
         <div>
           {lesson.video_url && (
-            <div className="aspect-video bg-gray-200 dark:bg-gray-800 flex items-center justify-center rounded-lg">
+            <div className="aspect-video bg-gray-200 flex items-center justify-center rounded-lg">
               {isClient && (
                 <ReactPlayer
                   ref={playerRef}
@@ -200,7 +200,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
                   key={sentence.id}
                   className={`p-3 rounded-lg cursor-pointer border flex justify-between items-center ${
                     currentSentenceIndex === index
-                      ? "bg-gray-100 dark:bg-gray-800 border-blue-500"
+                      ? "bg-gray-200 border-blue-500"
                       : "bg-transparent"
                   }`}
                   onClick={() => setCurrentSentenceIndex(index)}
@@ -299,7 +299,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
                   {lesson.vocabulary.map((item, index) => (
                     <li key={index}>
                       <strong className="font-semibold">{item.word}</strong>: {item.meaning}
-                      {item.pronunciation && <span className="text-sm text-gray-500 dark:text-gray-400 ml-2">[{item.pronunciation}]</span>}
+                      {item.pronunciation && <span className="text-sm text-gray-500 ml-2">[{item.pronunciation}]</span>}
                     </li>
                   ))}
                 </ul>
