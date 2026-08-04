@@ -10,12 +10,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { PlusCircle } from "lucide-react";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs";
 import { Lesson } from "@/types/lesson";
 
 function LessonGrid({ lessons }: { lessons: Lesson[] | null }) {
@@ -45,50 +39,22 @@ function LessonGrid({ lessons }: { lessons: Lesson[] | null }) {
 export default async function LessonsPage() {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
-
   const { data: officialLessons } = await supabase
     .from("lesson")
-    .select()
-    .is("user_id", null);
-
-  let myLessons: Lesson[] | null = null;
-  if (user) {
-    const { data } = await supabase
-      .from("lesson")
-      .select()
-      .eq("user_id", user.id);
-    myLessons = data;
-  }
+    .select();
 
   return (
     <div className="bg-white dark:bg-black">
       <div className="container mx-auto py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Lessons</h1>
+          <h1 className="text-3xl font-bold">Official Lessons</h1>
           <Link href="/lessons/create">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" /> Create New Lesson
             </Button>
           </Link>
         </div>
-
-        <Tabs defaultValue="official" className="w-full">
-          <TabsList>
-            <TabsTrigger value="official">Official</TabsTrigger>
-            <TabsTrigger value="my-lessons">My Lessons</TabsTrigger>
-          </TabsList>
-          <TabsContent value="official" className="mt-4">
-            <LessonGrid lessons={officialLessons} />
-          </TabsContent>
-          <TabsContent value="my-lessons" className="mt-4">
-            {user ? (
-              <LessonGrid lessons={myLessons} />
-            ) : (
-              <p>You need to be logged in to see your lessons.</p>
-            )}
-          </TabsContent>
-        </Tabs>
+        <LessonGrid lessons={officialLessons} />
       </div>
     </div>
   );
