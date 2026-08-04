@@ -18,28 +18,16 @@ export default function Navbar({ user }: { user: User | null }) {
           </div>
           <nav className="hidden md:flex md:space-x-8">
             <Link
-              href="#"
+              href="/lessons"
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
             >
-              Official Lesson
+              Lessons
             </Link>
             <Link
-              href="#"
+              href="/lessons/create"
               className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
             >
-              Import YouTube
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-              Vocabulary
-            </Link>
-            <Link
-              href="#"
-              className="text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
-            >
-              AI Coach
+              Create Lesson
             </Link>
           </nav>
           <div>
