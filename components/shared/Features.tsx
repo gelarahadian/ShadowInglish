@@ -18,10 +18,10 @@ export default function Features() {
   ];
 
   return (
-    <section className="bg-white py-12 sm:py-16 lg:py-20 dark:bg-black">
+    <section className="bg-white py-12 sm:py-16 lg:py-20">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
+          <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
             How ShadowInglish Works
           </h2>
         </div>
@@ -47,10 +47,10 @@ export default function Features() {
                   />
                 </svg>
               </div>
-              <h3 className="mt-5 text-lg font-medium text-gray-900 dark:text-white">
+              <h3 className="mt-5 text-lg font-medium text-gray-900">
                 {feature.name}
               </h3>
-              <p className="mt-2 text-base text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-base text-gray-500">
                 {feature.description}
               </p>
             </div>

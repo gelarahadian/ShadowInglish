@@ -2,9 +2,9 @@ import { Button } from "../ui/button";
 
 export default function Cta() {
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
+    <section className="bg-gray-50">
       <div className="container mx-auto px-4 py-12 sm:px-6 lg:flex lg:items-center lg:justify-between lg:px-8 lg:py-16">
-        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl dark:text-white">
+        <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
           <span className="block">Ready to dive in?</span>
           <span className="block text-blue-600">
             Start your free trial today.

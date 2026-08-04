@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Providers } from "./providers";
 import { createClient } from "@/lib/supabase/server";
 import Navbar from "@/components/shared/Navbar";
+import Footer from "@/components/shared/Footer";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,9 +37,12 @@ export default async function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="flex flex-col min-h-screen">
         <Navbar user={user} />
-        <Providers>{children}</Providers>
+        <main className="flex-grow pt-16">
+          <Providers>{children}</Providers>
+        </main>
+        <Footer />
       </body>
     </html>
   );

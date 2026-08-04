@@ -1,4 +1,3 @@
-import Footer from "@/components/shared/Footer";
 
 export default function LessonsLayout({
   children,
@@ -6,9 +5,8 @@ export default function LessonsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div>
+    <div className="min-h-full bg-white">
       <main>{children}</main>
-      <Footer />
     </div>
   );
 }
