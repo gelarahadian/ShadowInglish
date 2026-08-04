@@ -264,15 +264,15 @@ translation, vocabulary, dan AI feedback sehingga proses belajar menjadi
 
 lebih efektif dan interaktif.
 
-| Priority  | Feature                | Status  |
-| --------- | ---------------------- | ------- |
-| 🔴 High   | Authentication         | ⏳ Todo |
-| 🔴 High   | Official Lessons       | ⏳ Todo |
-| 🔴 High   | Shadowing Player       | ⏳ Todo |
-| 🔴 High   | Transcript             | ⏳ Todo |
-| 🔴 High   | Translation            | ⏳ Todo |
-| 🔴 High   | Vocabulary             | ⏳ Todo |
-| 🟡 Medium | Progress Tracking      | ⏳ Todo |
-| 🟡 Medium | Bookmark               | ⏳ Todo |
-| 🟢 Low    | AI Pronunciation Score | ⏳ Todo |
-| 🟢 Low    | AI Coach               | ⏳ Todo |
+| Priority  | Feature                | Status      |
+| --------- | ---------------------- | ----------- |
+| 🔴 High   | Authentication         | ✅ Done     |
+| 🔴 High   | Official Lessons       | ✅ Done     |
+| 🔴 High   | Shadowing Player       | ✅ Done     |
+| 🔴 High   | Transcript             | ✅ Done     |
+| 🔴 High   | Translation            | ✅ Done     |
+| 🔴 High   | Vocabulary             | ✅ Done     |
+| 🟡 Medium | Progress Tracking      | ⏳ Todo     |
+| 🟡 Medium | Bookmark               | ⏳ Todo     |
+| 🟢 Low    | AI Pronunciation Score | ▶️ Partial  |
+| 🟢 Low    | AI Coach               | ⏳ Todo     |
