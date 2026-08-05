@@ -173,31 +173,33 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
               )}
             </div>
           )}
-          <div className="mt-4">
-            <h2 className="text-lg font-semibold mb-2">Lesson Controls</h2>
-            <div className="flex items-center gap-4">
-              <Button onClick={handlePreviousSentence} size="icon" aria-label="Previous Sentence">
-                <Rewind />
-              </Button>
-              <Button onClick={() => setIsPlaying(!isPlaying)} size="icon" aria-label="Play/Pause">
-                {isPlaying ? <Pause /> : <Play />}
-              </Button>
-              <Button onClick={handleNextSentence} size="icon" aria-label="Next Sentence">
-                <FastForward />
-              </Button>
-              <div className="flex-grow flex items-center gap-2">
-                <span>Speed</span>
-                <Slider
-                  min={0.5}
-                  max={2}
-                  step={0.25}
-                  value={[speed]}
-                  onValueChange={(value) => setSpeed(value[0])}
-                />
-                <span>{speed}x</span>
+          {lesson.video_url && (
+            <div className="mt-4">
+              <h2 className="text-lg font-semibold mb-2">Lesson Controls</h2>
+              <div className="flex items-center gap-4">
+                <Button onClick={handlePreviousSentence} size="icon" aria-label="Previous Sentence">
+                  <Rewind />
+                </Button>
+                <Button onClick={() => setIsPlaying(!isPlaying)} size="icon" aria-label="Play/Pause">
+                  {isPlaying ? <Pause /> : <Play />}
+                </Button>
+                <Button onClick={handleNextSentence} size="icon" aria-label="Next Sentence">
+                  <FastForward />
+                </Button>
+                <div className="flex-grow flex items-center gap-2">
+                  <span>Speed</span>
+                  <Slider
+                    min={0.5}
+                    max={2}
+                    step={0.25}
+                    value={[speed]}
+                    onValueChange={(value) => setSpeed(value[0])}
+                  />
+                  <span>{speed}x</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           {/* Sentence List */}
           <div className="mt-6">

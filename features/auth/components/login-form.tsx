@@ -43,7 +43,7 @@ export function LoginForm() {
       setError(error.message);
     } else {
       setError(null);
-      router.push("/"); // Redirect to homepage on successful login
+      router.push("/lessons"); // Redirect to lessons page on successful login
       router.refresh();
     }
   };
