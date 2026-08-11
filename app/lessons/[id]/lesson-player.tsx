@@ -34,7 +34,6 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const [isTranscribing, setIsTranscribing] = useState(false);
   const playerRef = useRef<any>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
-  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
   useEffect(() => {
     setIsClient(true);

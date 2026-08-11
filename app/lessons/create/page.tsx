@@ -29,6 +29,7 @@ import { useState, useTransition } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Terminal, Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
+import { AudioUploadForm } from "@/features/auth/components/audio-upload-form";
 
 // Schema for manual form
 const manualFormSchema = z.object({
@@ -173,19 +174,24 @@ function YouTubeImportForm() {
     setError(null);
     startTransition(async () => {
       console.log("Submitting URL:", values.youtubeUrl);
-      // Placeholder for future API call
-      // const result = await importFromYouTube(values.youtubeUrl);
-      // if (result?.error) {
-      //   setError(result.error);
-      // } else if (result?.lessonId) {
-      //   router.push(`/lessons/${result.lessonId}`);
-      // }
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      console.log("Simulated import successful.");
-      // On success, you would typically redirect, e.g.:
-      // router.push('/lessons/some-new-id');
+      const response = await fetch('/api/import-youtube', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: values.youtubeUrl }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error || 'Failed to import lesson.');
+      } else if (result?.lessonId) {
+        router.push(`/lessons/${result.lessonId}`);
+      } else {
+        setError('Unexpected error occurred.');
+      }
     });
   }
 
@@ -242,12 +248,16 @@ export default function CreateLessonPage() {
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="youtube" className="w-full">
-            <TabsList className="grid w-full grid-cols-2">
+            <TabsList className="grid w-full grid-cols-3">
               <TabsTrigger value="youtube">Import from YouTube</TabsTrigger>
+              <TabsTrigger value="upload">Upload Audio</TabsTrigger>
               <TabsTrigger value="manual">Create Manually</TabsTrigger>
             </TabsList>
             <TabsContent value="youtube" className="mt-6">
               <YouTubeImportForm />
+            </TabsContent>
+            <TabsContent value="upload" className="mt-6">
+              <AudioUploadForm />
             </TabsContent>
             <TabsContent value="manual" className="mt-6">
               <ManualCreateForm />
