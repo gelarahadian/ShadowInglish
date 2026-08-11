@@ -106,7 +106,7 @@ export function AudioUploadForm() {
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading...
+              Uploading & Transcribing... (Grab a coffee, this takes 5-10 mins)
             </>
           ) : (
             "Upload and Create Lesson"

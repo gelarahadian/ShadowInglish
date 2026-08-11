@@ -51,15 +51,64 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
     }
   };
 
+  const stopTimeRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    if (isPlaying && stopTimeRef.current !== null) {
+      const checkTime = () => {
+        // playerRef.current is the HTMLVideoElement
+        if (playerRef.current && playerRef.current.currentTime >= stopTimeRef.current!) {
+          // Pause the video
+          playerRef.current.pause();
+          setIsPlaying(false);
+          stopTimeRef.current = null;
+        } else if (isPlaying) {
+          requestAnimationFrame(checkTime);
+        }
+      };
+      requestAnimationFrame(checkTime);
+    }
+  }, [isPlaying]);
+
   const handlePlayModelAudio = () => {
+    // 1. Check if we have an audio/video URL (from YouTube or Upload)
+    if (lesson.video_url) {
+      const player = playerRef.current;
+      let video = player;
+
+      // Try to find the actual HTMLVideoElement
+      if (video && !(video instanceof HTMLVideoElement)) {
+        if (typeof player.getInternalPlayer === "function") {
+          video = player.getInternalPlayer();
+        }
+      }
+
+      if (video && video instanceof HTMLVideoElement && activeSentence) {
+        if (!video.src && lesson.video_url) {
+          video.src = lesson.video_url;
+        }
+
+        video.volume = 1;
+        video.muted = false;
+        video.currentTime = activeSentence.start_time ?? 0;
+        video.play().catch((e: any) => console.error("Error playing:", e));
+
+        setIsPlaying(true);
+        stopTimeRef.current = activeSentence.end_time;
+        return; // Exit after playing audio/video
+      }
+    }
+
+    // 2. Fallback: Use Web Speech API (TTS) for manual lessons or if video fails
     if (typeof window !== "undefined" && window.speechSynthesis) {
-      const utterance = new SpeechSynthesisUtterance(
-        activeSentence?.text ?? ""
-      );
+      console.log("Using Web Speech API (TTS) for model audio");
+      const utterance = new SpeechSynthesisUtterance(activeSentence?.text ?? "");
       utterance.rate = speed;
       utterance.onstart = () => setIsPlaying(true);
       utterance.onend = () => setIsPlaying(false);
       window.speechSynthesis.speak(utterance);
+    } else {
+      console.error("No audio source and TTS not supported");
     }
   };
 
@@ -100,7 +149,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
 
         mediaRecorder.onstop = () => {
           const audioBlob = new Blob(chunks, { type: "audio/wav" });
-          setAudioChunks(chunks);
+          // setAudioChunks(chunks); // Removed because audioChunks is not used elsewhere
           transcribeAudio(audioBlob);
         };
 
@@ -157,19 +206,17 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
         <div>
           {lesson.video_url && (
             <div className="aspect-video bg-gray-200 flex items-center justify-center rounded-lg">
-              {isClient && (
-                <ReactPlayer
-                  ref={playerRef as any}
-                  url={lesson.video_url}
-                  width="100%"
-                  height="100%"
-                  controls
-                  playing={isPlaying}
-                  playbackRate={speed}
-                  onPlay={() => setIsPlaying(true)}
-                  onPause={() => setIsPlaying(false)}
-                />
-              )}
+              <ReactPlayer
+                ref={playerRef as any}
+                url={lesson.video_url}
+                width="100%"
+                height="100%"
+                controls
+                playing={isPlaying}
+                playbackRate={speed}
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+              />
             </div>
           )}
           {lesson.video_url && (
