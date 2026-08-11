@@ -32,7 +32,7 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
   const [feedbackStatus, setFeedbackStatus] = useState<Record<number, 'good' | 'practice'>>({});
   const [transcriptionResult, setTranscriptionResult] = useState<{ text: string; score: number } | null>(null);
   const [isTranscribing, setIsTranscribing] = useState(false);
-  const playerRef = useRef<any>(null);
+  const playerRef = useRef<HTMLAudioElement | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 
   useEffect(() => {
@@ -56,9 +56,9 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
   useEffect(() => {
     if (isPlaying && stopTimeRef.current !== null) {
       const checkTime = () => {
-        // playerRef.current is the HTMLVideoElement
+        // playerRef.current is the HTMLAudioElement
         if (playerRef.current && playerRef.current.currentTime >= stopTimeRef.current!) {
-          // Pause the video
+          // Pause the audio
           playerRef.current.pause();
           setIsPlaying(false);
           stopTimeRef.current = null;
@@ -71,35 +71,16 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
   }, [isPlaying]);
 
   const handlePlayModelAudio = () => {
-    // 1. Check if we have an audio/video URL (from YouTube or Upload)
-    if (lesson.video_url) {
-      const player = playerRef.current;
-      let video = player;
-
-      // Try to find the actual HTMLVideoElement
-      if (video && !(video instanceof HTMLVideoElement)) {
-        if (typeof player.getInternalPlayer === "function") {
-          video = player.getInternalPlayer();
-        }
-      }
-
-      if (video && video instanceof HTMLVideoElement && activeSentence) {
-        if (!video.src && lesson.video_url) {
-          video.src = lesson.video_url;
-        }
-
-        video.volume = 1;
-        video.muted = false;
-        video.currentTime = activeSentence.start_time ?? 0;
-        video.play().catch((e: any) => console.error("Error playing:", e));
-
+    const audio = playerRef.current;
+    if (audio && activeSentence) {
+        audio.currentTime = activeSentence.start_time ?? 0;
+        audio.play().catch((e: any) => console.error("Error playing:", e));
         setIsPlaying(true);
         stopTimeRef.current = activeSentence.end_time;
-        return; // Exit after playing audio/video
-      }
+        return;
     }
 
-    // 2. Fallback: Use Web Speech API (TTS) for manual lessons or if video fails
+    // Fallback: Use Web Speech API (TTS) for manual lessons or if audio fails
     if (typeof window !== "undefined" && window.speechSynthesis) {
       console.log("Using Web Speech API (TTS) for model audio");
       const utterance = new SpeechSynthesisUtterance(activeSentence?.text ?? "");
@@ -205,52 +186,18 @@ export default function LessonPlayer({ lesson }: { lesson: Lesson }) {
         {/* Left Column */}
         <div>
           {lesson.video_url && (
-            <div className="aspect-video bg-gray-200 flex items-center justify-center rounded-lg">
-              <ReactPlayer
-                ref={playerRef as any}
-                url={lesson.video_url}
-                width="100%"
-                height="100%"
-                controls
-                playing={isPlaying}
-                playbackRate={speed}
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-              />
-            </div>
-          )}
-          {lesson.video_url && (
-            <div className="mt-4">
-              <h2 className="text-lg font-semibold mb-2">Lesson Controls</h2>
-              <div className="flex items-center gap-4">
-                <Button onClick={handlePreviousSentence} size="icon" aria-label="Previous Sentence">
-                  <Rewind />
-                </Button>
-                <Button onClick={() => setIsPlaying(!isPlaying)} size="icon" aria-label="Play/Pause">
-                  {isPlaying ? <Pause /> : <Play />}
-                </Button>
-                <Button onClick={handleNextSentence} size="icon" aria-label="Next Sentence">
-                  <FastForward />
-                </Button>
-                <div className="flex-grow flex items-center gap-2">
-                  <span>Speed</span>
-                  <Slider
-                    min={0.5}
-                    max={2}
-                    step={0.25}
-                    value={[speed]}
-                    onValueChange={(value) => setSpeed(value[0])}
-                  />
-                  <span>{speed}x</span>
-                </div>
-              </div>
+            <div className="flex items-center justify-center rounded-lg p-2">
+              <audio ref={playerRef} controls className="w-full" onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)}>
+                <source src={lesson.video_url} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
             </div>
           )}
 
           {/* Sentence List */}
           <div className="mt-6">
             <h2 className="text-lg font-semibold mb-2">Sentences</h2>
-            <div className="space-y-2 max-h-60 overflow-y-auto pr-2">
+            <div className="space-y-2 max-h-[500px] overflow-y-auto pr-2">
               {lesson.sentences.map((sentence, index) => (
                 <div
                   key={sentence.id}

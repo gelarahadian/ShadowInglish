@@ -47,21 +47,14 @@ export default async function LessonsPage() {
 
   const { data: { user } } = await supabase.auth.getUser();
 
-  // Fetch official lessons (user_id is null)
-  const { data: officialLessons } = await supabase
-    .from("lesson")
-    .select()
-    .is("user_id", null);
+  // Fetch official lessons and my lessons in parallel
+  const [officialLessonsResponse, myLessonsResponse] = await Promise.all([
+    supabase.from("lesson").select().is("user_id", null),
+    user ? supabase.from("lesson").select().eq("user_id", user.id) : Promise.resolve({ data: null, error: null })
+  ]);
 
-  // Fetch user's own lessons if logged in
-  let myLessons: Lesson[] | null = null;
-  if (user) {
-    const { data } = await supabase
-      .from("lesson")
-      .select()
-      .eq("user_id", user.id);
-    myLessons = data;
-  }
+  const officialLessons = officialLessonsResponse.data;
+  const myLessons = myLessonsResponse.data;
 
   return (
     <div className="bg-white">

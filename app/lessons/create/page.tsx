@@ -27,8 +27,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createLesson } from "../actions";
 import { useState, useTransition } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Terminal, Loader2 } from "lucide-react";
-import { useRouter } from 'next/navigation';
+import { Terminal } from "lucide-react";
 import { AudioUploadForm } from "@/features/auth/components/audio-upload-form";
 
 // Schema for manual form
@@ -37,14 +36,6 @@ const manualFormSchema = z.object({
   description: z.string().optional(),
   level: z.enum(["Beginner", "Intermediate", "Advanced"]),
   sentences: z.string().min(10, "Please provide at least one sentence."),
-});
-
-// Schema for YouTube import form
-const youtubeFormSchema = z.object({
-  youtubeUrl: z.string().url({ message: "Please enter a valid YouTube URL." })
-    .refine(url => url.includes('youtube.com') || url.includes('youtu.be'), {
-      message: "URL must be from YouTube.",
-    }),
 });
 
 function ManualCreateForm() {
@@ -68,7 +59,6 @@ function ManualCreateForm() {
       if (result?.error) {
         setError(result.error);
       }
-      // TODO: Handle successful creation (e.g., show success message, redirect)
     });
   }
 
@@ -158,84 +148,6 @@ function ManualCreateForm() {
   );
 }
 
-function YouTubeImportForm() {
-  const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
-
-  const form = useForm<z.infer<typeof youtubeFormSchema>>({
-    resolver: zodResolver(youtubeFormSchema),
-    defaultValues: {
-      youtubeUrl: "",
-    },
-  });
-
-  async function onSubmit(values: z.infer<typeof youtubeFormSchema>) {
-    setError(null);
-    startTransition(async () => {
-      console.log("Submitting URL:", values.youtubeUrl);
-
-      const response = await fetch('/api/import-youtube', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ url: values.youtubeUrl }),
-      });
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        setError(result.error || 'Failed to import lesson.');
-      } else if (result?.lessonId) {
-        router.push(`/lessons/${result.lessonId}`);
-      } else {
-        setError('Unexpected error occurred.');
-      }
-    });
-  }
-
-  return (
-    <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-        {error && (
-          <Alert variant="destructive">
-            <Terminal className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        <FormField
-          control={form.control}
-          name="youtubeUrl"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>YouTube URL</FormLabel>
-              <FormControl>
-                <Input placeholder="https://www.youtube.com/watch?v=..." {...field} />
-              </FormControl>
-              <FormDescription>
-                Paste a YouTube video URL to automatically generate a lesson.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <Button type="submit" disabled={isPending}>
-          {isPending ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Importing...
-            </>
-          ) : (
-            "Import from YouTube"
-          )}
-        </Button>
-      </form>
-    </Form>
-  );
-}
-
 export default function CreateLessonPage() {
   return (
     <div className="container mx-auto py-8">
@@ -247,19 +159,17 @@ export default function CreateLessonPage() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <Tabs defaultValue="youtube" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="youtube">Import from YouTube</TabsTrigger>
+          <Tabs defaultValue="upload" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="upload">Upload Audio</TabsTrigger>
               <TabsTrigger value="manual">Create Manually</TabsTrigger>
             </TabsList>
-            <TabsContent value="youtube" className="mt-6">
-              <YouTubeImportForm />
-            </TabsContent>
             <TabsContent value="upload" className="mt-6">
+              <p className="text-sm text-gray-500 mb-4">Upload file audio Anda, AI akan men-transkrip dan menyiapkan audionya secara otomatis.</p>
               <AudioUploadForm />
             </TabsContent>
             <TabsContent value="manual" className="mt-6">
+              <p className="text-sm text-gray-500 mb-4">Membuat pelajaran tanpa AI, Anda memasukkan teks secara manual.</p>
               <ManualCreateForm />
             </TabsContent>
           </Tabs>
