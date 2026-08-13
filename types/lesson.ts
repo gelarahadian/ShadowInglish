@@ -24,4 +24,5 @@ export type Lesson = {
   level: string | null;
   sentences: Sentence[];
   vocabulary: VocabularyItem[]; // Added vocabulary
+  shadowing_tips: string | null;
 };

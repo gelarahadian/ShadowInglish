@@ -30,6 +30,45 @@ export default async function LessonPage({
     .eq("lesson_id", await id)
     .order("order", { ascending: true });
 
+  const { data: vocabulary } = await supabase
+    .from("vocabulary_items")
+    .select("word, meaning, pronunciation")
+    .eq("lesson_id", id);
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const { data: completedSentences } = user
+    ? await supabase
+      .from("user_sentence_progress")
+      .select("sentence_id")
+      .eq("user_id", user.id)
+      .in("sentence_id", (sentences ?? []).map((sentence) => sentence.id))
+    : { data: [] };
+
+  const { data: shadowingResults } = user
+    ? await supabase
+      .from("shadowing_results")
+      .select("sentence_id, score, transcribed_text, created_at")
+      .eq("user_id", user.id)
+      .in("sentence_id", (sentences ?? []).map((s) => s.id))
+    : { data: [] };
+
+  const latestResults = new Map<string, { score: number; transcribedText: string }>();
+  if (shadowingResults) {
+    const sortedResults = shadowingResults.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime());
+    for (const result of sortedResults) {
+      if (!latestResults.has(result.sentence_id)) {
+        latestResults.set(result.sentence_id, { score: result.score, transcribedText: result.transcribed_text ?? "" });
+      }
+    }
+  }
+
+  const initialResults: { [key: string]: { score: number; transcribedText: string } } = {};
+  latestResults.forEach((value, key) => {
+    initialResults[key] = value;
+  });
+
   if (!lesson) {
     return <div>Lesson not found.</div>;
   }
@@ -37,11 +76,8 @@ export default async function LessonPage({
   const lessonWithSentences: Lesson = {
     ...lesson,
     sentences: (sentences as Sentence[]) ?? [],
+    vocabulary: vocabulary ?? [],
   };
 
-  const firstSentence = lessonWithSentences.sentences.find(
-    (s: any) => s.order === 1
-  );
-
-  return <LessonPlayer lesson={lessonWithSentences} />;
+  return <LessonPlayer lesson={lessonWithSentences} completedSentenceIds={completedSentences?.map((progress) => progress.sentence_id) ?? []} initialResults={initialResults} />;
 }
