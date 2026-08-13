@@ -22,6 +22,7 @@ export type Lesson = {
   description: string | null;
   video_url: string | null;
   level: string | null;
+  user_id: string | null;
   sentences: Sentence[];
   vocabulary: VocabularyItem[]; // Added vocabulary
   shadowing_tips: string | null;
