@@ -152,6 +152,12 @@ export default function LessonPlayer({
       stopCheckRef.current = null;
     }
     stopTimeRef.current = null;
+
+  useEffect(() => {
+    if (shouldAutoComplete && currentTranscriptionResult?.score !== undefined && currentTranscriptionResult?.score >= 71 && !completedSentenceIdSet.has(activeSentence?.id ?? "")) {
+      handleCompleteSentence();
+    }
+  }, [shouldAutoComplete, currentTranscriptionResult?.score, completedSentenceIdSet, activeSentence?.id, handleCompleteSentence]);
   };
 
   useEffect(() => {
