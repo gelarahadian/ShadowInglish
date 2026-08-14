@@ -135,6 +135,16 @@ export default function LessonPlayer({
 
   const currentTranscriptionResult = transcriptionResults[activeSentence?.id] ?? (activeSentence?.id ? (initialResults[activeSentence.id] ? { text: initialResults[activeSentence.id].transcribedText, score: initialResults[activeSentence.id].score } : null) : null);
 
+  const getScoreRange = (score: number) => {
+    if (score >= 71) return { label: "Bagus", color: "green" };
+    if (score >= 51) return { label: "Cukup", color: "yellow" };
+    if (score >= 0) return { label: "Kurang", color: "red" };
+    return { label: "---", color: "gray" };
+  };
+
+  const shouldAutoComplete = !currentTranscriptionResult?.score || currentTranscriptionResult?.score >= 71;
+
+
 
   const clearStopCheck = () => {
     if (stopCheckRef.current !== null) {
