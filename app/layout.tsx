@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "ShadowInglish",
   description:
-    "Practice English speaking with shadowing lessons, transcripts, vocabulary, and progress tracking.",
+    "Latih speaking bahasa Inggris dengan pelajaran shadowing, transkrip, kosakata, dan pelacakan progres.",
 };
 
 export default async function RootLayout({
@@ -34,7 +34,7 @@ export default async function RootLayout({
 
   return (
     <html
-      lang="en"
+      lang="id"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex flex-col min-h-screen">

@@ -1,10 +1,10 @@
 export default function AuthCodeError() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen">
-      <h1>Authentication Error</h1>
-      <p>Sorry, we couldn't sign you in. Please try again.</p>
+      <h1>Galat Autentikasi</h1>
+      <p>Maaf, kami tidak dapat memproses masuk Anda. Silakan coba lagi.</p>
       <a href="/login" className="underline mt-4">
-        Back to Login
+        Kembali ke Masuk
       </a>
     </div>
   );

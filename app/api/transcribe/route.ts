@@ -9,7 +9,7 @@ const client = new AssemblyAI({
 export async function POST(req: NextRequest) {
   if (!process.env.ASSEMBLYAI_API_KEY) {
     return NextResponse.json(
-      { error: "AssemblyAI API key is not configured." },
+      { error: "Kunci API AssemblyAI belum dikonfigurasi." },
       { status: 500 },
     );
   }
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return NextResponse.json({ error: "You must be logged in to record shadowing." }, { status: 401 });
+    return NextResponse.json({ error: "Anda harus masuk untuk merekam shadowing." }, { status: 401 });
   }
 
   try {
@@ -29,10 +29,10 @@ export async function POST(req: NextRequest) {
     const sentenceId = formData.get("sentenceId") as string;
 
     if (!audioFile) {
-      return NextResponse.json({ error: "No audio file provided." }, { status: 400 });
+      return NextResponse.json({ error: "Tidak ada file audio yang diberikan." }, { status: 400 });
     }
     if (!originalText) {
-      return NextResponse.json({ error: "No original text provided." }, { status: 400 });
+      return NextResponse.json({ error: "Tidak ada teks asli yang diberikan." }, { status: 400 });
     }
 
     // The SDK handles the upload and polling process automatically
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error("Error in transcription API route:", error);
     return NextResponse.json(
-      { error: "An unexpected error occurred during transcription." },
+      { error: "Terjadi galat tak terduga selama transkripsi." },
       { status: 500 },
     );
   }

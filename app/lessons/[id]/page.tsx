@@ -70,7 +70,7 @@ export default async function LessonPage({
   });
 
   if (!lesson) {
-    return <div>Lesson not found.</div>;
+    return <div>Pelajaran tidak ditemukan.</div>;
   }
 
   const lessonWithSentences: Lesson = {

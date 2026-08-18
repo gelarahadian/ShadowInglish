@@ -20,8 +20,8 @@ import { Terminal, Loader2 } from "lucide-react";
 import { useRouter } from 'next/navigation';
 
 const uploadFormSchema = z.object({
-  title: z.string().min(3, "Title must be at least 3 characters."),
-  audio: z.any().refine((files) => files?.length > 0, "Please upload an audio file."),
+  title: z.string().min(3, "Judul minimal 3 karakter."),
+  audio: z.any().refine((files) => files?.length > 0, "Silakan unggah file audio."),
 });
 
 export function AudioUploadForm() {
@@ -51,11 +51,11 @@ export function AudioUploadForm() {
       const result = await response.json();
 
       if (!response.ok) {
-        setError(result.error || 'Failed to upload audio.');
+        setError(result.error || 'Gagal mengunggah audio.');
       } else if (result?.lessonId) {
         router.push(`/lessons/${result.lessonId}`);
       } else {
-        setError('Unexpected error occurred.');
+        setError('Terjadi galat yang tidak terduga.');
       }
     });
   }
@@ -66,7 +66,7 @@ export function AudioUploadForm() {
         {error && (
           <Alert variant="destructive">
             <Terminal className="h-4 w-4" />
-            <AlertTitle>Error</AlertTitle>
+            <AlertTitle>Galat</AlertTitle>
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
@@ -75,9 +75,9 @@ export function AudioUploadForm() {
           name="title"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Lesson Title</FormLabel>
+              <FormLabel>Judul Pelajaran</FormLabel>
               <FormControl>
-                <Input placeholder="Enter lesson title" {...field} />
+                <Input placeholder="Masukkan judul pelajaran" {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -88,7 +88,7 @@ export function AudioUploadForm() {
           name="audio"
           render={({ field: { onChange, value, ...field } }) => (
             <FormItem>
-              <FormLabel>Audio File</FormLabel>
+              <FormLabel>File Audio</FormLabel>
               <FormControl>
                 <Input
                   type="file"
@@ -97,7 +97,7 @@ export function AudioUploadForm() {
                   {...field}
                 />
               </FormControl>
-              <FormDescription>Upload an audio file (.mp3, .wav).</FormDescription>
+              <FormDescription>Unggah file audio (.mp3, .wav).</FormDescription>
               <FormMessage />
             </FormItem>
           )}
@@ -106,10 +106,10 @@ export function AudioUploadForm() {
           {isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Uploading & Transcribing... (Grab a coffee, this takes 5-10 mins)
+              Mengunggah &amp; Mentranskripsi... (Mohon tunggu, ini butuh 5-10 menit)
             </>
           ) : (
-            "Upload and Create Lesson"
+            "Unggah dan Buat Pelajaran"
           )}
         </Button>
       </form>

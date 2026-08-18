@@ -1,19 +1,19 @@
 export default function Features() {
   const features = [
     {
-      name: "Shadowing Practice",
+      name: "Latihan Shadowing",
       description:
-        "Listen to native speakers and mimic their pronunciation and intonation.",
+        "Dengarkan penutur asli dan tirukan pelafalan serta intonasi mereka.",
     },
     {
-      name: "AI Feedback",
+      name: "Umpan Balik AI",
       description:
-        "Get instant feedback on your pronunciation and fluency from our AI coach.",
+        "Dapatkan umpan balik instan tentang pelafalan dan kelancaran dari pelatih AI kami.",
     },
     {
-      name: "Vocabulary Builder",
+      name: "Pembangun Kosakata",
       description:
-        "Build your vocabulary with words from the videos you watch.",
+        "Perkaya kosakata Anda dari kata-kata di video yang Anda tonton.",
     },
   ];
 
@@ -22,7 +22,7 @@ export default function Features() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h2 className="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
-            How ShadowInglish Works
+            Cara Kerja ShadowInglish
           </h2>
         </div>
         <div className="mt-12 grid gap-8 md:grid-cols-3">

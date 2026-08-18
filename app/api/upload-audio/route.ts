@@ -17,16 +17,16 @@ export async function POST(request: Request) {
   const supabase = await createClient();
 
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return NextResponse.json({ error: 'You must be logged in to upload lessons.' }, { status: 401 });
-  if (!process.env.ASSEMBLYAI_API_KEY) return NextResponse.json({ error: 'Transcription service is not configured.' }, { status: 500 });
-  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return NextResponse.json({ error: 'Supabase service role key is not configured.' }, { status: 500 });
+  if (!user) return NextResponse.json({ error: 'Anda harus masuk untuk mengunggah pelajaran.' }, { status: 401 });
+  if (!process.env.ASSEMBLYAI_API_KEY) return NextResponse.json({ error: 'Layanan transkripsi belum dikonfigurasi.' }, { status: 500 });
+  if (!process.env.SUPABASE_SERVICE_ROLE_KEY) return NextResponse.json({ error: 'Kunci peran layanan Supabase belum dikonfigurasi.' }, { status: 500 });
 
   try {
     const formData = await request.formData();
     const file = formData.get('audio') as File;
     const title = formData.get('title') as string;
 
-    if (!file) return NextResponse.json({ error: 'No file uploaded.' }, { status: 400 });
+    if (!file) return NextResponse.json({ error: 'Tidak ada file yang diunggah.' }, { status: 400 });
 
     // Convert File to Buffer for AssemblyAI
     const arrayBuffer = await file.arrayBuffer();
@@ -41,7 +41,7 @@ export async function POST(request: Request) {
       format_text: true,
     });
 
-    if (transcript.status === 'error') throw new Error(`Transcription failed: ${transcript.error}`);
+    if (transcript.status === 'error') throw new Error(`Transkripsi gagal: ${transcript.error}`);
 
     // Fallback: If no sentences or paragraphs, construct sentences from words
     let sentences = (transcript as any).sentences;
@@ -72,7 +72,7 @@ export async function POST(request: Request) {
 
     if (!sentences || sentences.length === 0) {
       console.error('AssemblyAI Transcript:', JSON.stringify(transcript, null, 2));
-      throw new Error('Could not extract any sentences, paragraphs, or words from the audio.');
+      throw new Error('Tidak dapat mengekstrak kalimat, paragraf, atau kata dari audio.');
     }
 
     // 2. Upload Audio to Supabase Storage using service role
@@ -83,7 +83,7 @@ export async function POST(request: Request) {
         contentType: file.type,
       });
 
-    if (uploadError) throw new Error(`Could not upload audio to storage: ${uploadError.message}`);
+    if (uploadError) throw new Error(`Gagal mengunggah audio ke penyimpanan: ${uploadError.message}`);
 
     const { data: publicUrlData } = supabaseService.storage
       .from('lessons')
@@ -94,7 +94,7 @@ export async function POST(request: Request) {
       .from('lesson')
       .insert({
         title: title || file.name,
-        description: 'Imported from uploaded audio',
+        description: 'Diimpor dari audio yang diunggah',
         level: 'Beginner',
         user_id: user.id,
         video_url: publicUrlData.publicUrl, // Save the audio URL here
@@ -102,7 +102,7 @@ export async function POST(request: Request) {
       .select()
       .single();
 
-    if (lessonError) throw new Error(`Could not save lesson to database: ${lessonError.message}`);
+    if (lessonError) throw new Error(`Gagal menyimpan pelajaran ke database: ${lessonError.message}`);
 
     // 4. Prepare and save sentences
     const sentencesToInsert = sentences.map((sentence: any, index: number) => ({
@@ -114,13 +114,13 @@ export async function POST(request: Request) {
     }));
 
     const { error: sentencesError } = await supabase.from('sentence').insert(sentencesToInsert);
-    if (sentencesError) throw new Error(`Lesson was created, but failed to save sentences: ${sentencesError.message}`);
+    if (sentencesError) throw new Error(`Pelajaran berhasil dibuat, tetapi gagal menyimpan kalimat: ${sentencesError.message}`);
 
-    return NextResponse.json({ message: "Lesson created successfully!", lessonId: lessonData.id });
+    return NextResponse.json({ message: "Pelajaran berhasil dibuat!", lessonId: lessonData.id });
 
   } catch (error: any) {
     console.error('Error in /api/upload-audio:', error);
-    return NextResponse.json({ error: error.message || 'An unknown error occurred.' }, { status: 500 });
+    return NextResponse.json({ error: error.message || 'Terjadi galat yang tidak diketahui.' }, { status: 500 });
   }
 }
 

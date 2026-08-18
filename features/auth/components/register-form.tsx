@@ -73,17 +73,17 @@ export function RegisterForm() {
     <div className="flex items-center justify-center min-h-screen">
       <Card className="mx-auto max-w-sm">
         <CardHeader>
-          <CardTitle className="text-xl">Sign Up</CardTitle>
+          <CardTitle className="text-xl">Daftar</CardTitle>
           <CardDescription>
-            Enter your information to create an account
+            Masukkan informasi Anda untuk membuat akun
           </CardDescription>
         </CardHeader>
         <CardContent>
           {success ? (
             <div className="text-center">
-              <h3 className="text-lg font-semibold">Check your email</h3>
+              <h3 className="text-lg font-semibold">Cek email Anda</h3>
               <p className="text-sm text-muted-foreground">
-                We've sent a verification link to your email address.
+                Kami telah mengirim tautan verifikasi ke alamat email Anda.
               </p>
             </div>
           ) : (
@@ -95,7 +95,7 @@ export function RegisterForm() {
               )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="grid gap-2">
-                  <Label htmlFor="first-name">First name</Label>
+                  <Label htmlFor="first-name">Nama depan</Label>
                   <Input
                     id="first-name"
                     placeholder="Max"
@@ -105,7 +105,7 @@ export function RegisterForm() {
                   />
                 </div>
                 <div className="grid gap-2">
-                  <Label htmlFor="last-name">Last name</Label>
+                  <Label htmlFor="last-name">Nama belakang</Label>
                   <Input
                     id="last-name"
                     placeholder="Robinson"
@@ -127,7 +127,7 @@ export function RegisterForm() {
                 />
               </div>
               <div className="grid gap-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Kata Sandi</Label>
                 <Input
                   id="password"
                   type="password"
@@ -137,21 +137,21 @@ export function RegisterForm() {
                 />
               </div>
               <Button onClick={handleSignUp} className="w-full">
-                Create an account
+                Buat akun
               </Button>
               <Button
                 onClick={handleGoogleSignUp}
                 variant="outline"
                 className="w-full"
               >
-                Sign up with Google
+                Daftar dengan Google
               </Button>
             </div>
           )}
           <div className="mt-4 text-center text-sm">
-            Already have an account?{" "}
+            Sudah punya akun?{" "}
             <a href="/login" className="underline">
-              Sign in
+              Masuk
             </a>
           </div>
         </CardContent>

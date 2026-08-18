@@ -21,28 +21,28 @@ export default function Navbar({ user }: { user: User | null }) {
               href="/lessons"
               className="text-gray-500 hover:text-gray-900"
             >
-              Lessons
+              Pelajaran
             </Link>
             <Link
               href="/lessons/create"
               className="text-gray-500 hover:text-gray-900"
             >
-              Create Lesson
+              Buat Pelajaran
             </Link>
           </nav>
           <div>
             {user ? (
               <div className="flex items-center gap-4">
-                <span className="text-sm">Hi, {user.email?.split("@")[0]}</span>
+                <span className="text-sm">Halo, {user.email?.split("@")[0]}</span>
                 <form action={signOut}>
                   <Button variant="outline" size="sm">
-                    Sign Out
+                    Keluar
                   </Button>
                 </form>
               </div>
             ) : (
               <Link href="/login">
-                <Button>Login</Button>
+                <Button>Masuk</Button>
               </Link>
             )}
           </div>

@@ -20,7 +20,7 @@ import { Lesson } from "@/types/lesson";
 
 function LessonGrid({ lessons }: { lessons: Lesson[] | null }) {
   if (!lessons || lessons.length === 0) {
-    return <p className="text-gray-500 mt-4">No lessons found in this category.</p>;
+    return <p className="text-gray-500 mt-4">Tidak ada pelajaran di kategori ini.</p>;
   }
 
   return (
@@ -60,18 +60,18 @@ export default async function LessonsPage() {
     <div className="bg-white">
       <div className="container mx-auto py-8">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold">Lessons</h1>
+          <h1 className="text-3xl font-bold">Pelajaran</h1>
           <Link href="/lessons/create">
             <Button>
-              <PlusCircle className="mr-2 h-4 w-4" /> Create New Lesson
+              <PlusCircle className="mr-2 h-4 w-4" /> Buat Pelajaran Baru
             </Button>
           </Link>
         </div>
 
         <Tabs defaultValue="official" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="official">Official</TabsTrigger>
-            <TabsTrigger value="my-lessons">My Lessons</TabsTrigger>
+            <TabsTrigger value="official">Resmi</TabsTrigger>
+            <TabsTrigger value="my-lessons">Pelajaran Saya</TabsTrigger>
           </TabsList>
           <TabsContent value="official" className="mt-6">
             <LessonGrid lessons={officialLessons} />
@@ -81,9 +81,9 @@ export default async function LessonsPage() {
               <LessonGrid lessons={myLessons} />
             ) : (
               <div className="text-center py-12">
-                <p className="text-gray-500">You must be logged in to view your lessons.</p>
+                <p className="text-gray-500">Anda harus masuk untuk melihat pelajaran Anda.</p>
                 <Button asChild className="mt-4">
-                  <Link href="/login">Login</Link>
+                  <Link href="/login">Masuk</Link>
                 </Button>
               </div>
             )}

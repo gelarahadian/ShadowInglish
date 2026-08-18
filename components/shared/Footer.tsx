@@ -13,14 +13,14 @@ export default function Footer() {
               ShadowInglish
             </Link>
             <p className="text-base text-gray-500">
-              Upgrade your English speaking skills with shadowing.
+              Tingkatkan kemampuan speaking bahasa Inggris Anda dengan shadowing.
             </p>
           </div>
           <div className="mt-12 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-sm font-semibold tracking-wider text-gray-400 uppercase">
-                  Solutions
+                  Solusi
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
@@ -28,14 +28,14 @@ export default function Footer() {
                       href="#"
                       className="text-base text-gray-500 hover:text-gray-900"
                     >
-                      Pricing
+                      Harga
                     </Link>
                   </li>
                 </ul>
               </div>
               <div className="mt-12 md:mt-0">
                 <h3 className="text-sm font-semibold tracking-wider text-gray-400 uppercase">
-                  Support
+                  Dukungan
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
@@ -43,7 +43,7 @@ export default function Footer() {
                       href="#"
                       className="text-base text-gray-500 hover:text-gray-900"
                     >
-                      Contact
+                      Kontak
                     </Link>
                   </li>
                 </ul>
@@ -52,7 +52,7 @@ export default function Footer() {
             <div className="md:grid md:grid-cols-2 md:gap-8">
               <div>
                 <h3 className="text-sm font-semibold tracking-wider text-gray-400 uppercase">
-                  Company
+                  Perusahaan
                 </h3>
                 <ul className="mt-4 space-y-4">
                   <li>
@@ -60,7 +60,7 @@ export default function Footer() {
                       href="#"
                       className="text-base text-gray-500 hover:text-gray-900"
                     >
-                      About
+                      Tentang
                     </Link>
                   </li>
                 </ul>
@@ -70,8 +70,7 @@ export default function Footer() {
         </div>
         <div className="mt-12 border-t border-gray-200 pt-8">
           <p className="text-base text-gray-400 xl:text-center">
-            &copy; {new Date().getFullYear()} ShadowInglish, Inc. All rights
-            reserved.
+            &copy; {new Date().getFullYear()} ShadowInglish. Hak cipta dilindungi.
           </p>
         </div>
       </div>

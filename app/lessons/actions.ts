@@ -20,13 +20,13 @@ export async function createLesson(values: z.infer<typeof formSchema>) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "You must be logged in to create a lesson." };
+    return { error: "Anda harus masuk untuk membuat pelajaran." };
   }
 
   const sentences = parseTimestampedTranscript(values.sentences);
   console.log("Parsed sentences:", sentences);
   if (sentences.length === 0) {
-    return { error: "No valid sentences found. Make sure to provide timestamps for manual creation." };
+    return { error: "Tidak ada kalimat valid yang ditemukan. Pastikan untuk menyertakan timestamp untuk pembuatan manual." };
   }
 
   // 1. Insert the lesson and get its ID
@@ -42,7 +42,7 @@ export async function createLesson(values: z.infer<typeof formSchema>) {
 
   if (lessonError || !lessonData) {
     console.error("Error creating lesson:", lessonError);
-    return { error: "Could not create the lesson." };
+    return { error: "Gagal membuat pelajaran." };
   }
 
   const lessonId = lessonData.id;
@@ -64,7 +64,7 @@ export async function createLesson(values: z.infer<typeof formSchema>) {
     console.error("Error creating sentences:", sentencesError);
     // TODO: Delete the lesson that was just created to avoid orphaned lessons.
     await supabase.from("lesson").delete().eq("id", lessonId);
-    return { error: "Could not save the sentences." };
+    return { error: "Gagal menyimpan kalimat." };
   }
 
   // 3. Revalidate paths and redirect

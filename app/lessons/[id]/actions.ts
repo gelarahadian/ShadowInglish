@@ -10,14 +10,14 @@ export async function completeSentence(sentenceId: string) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  if (!user) return { error: "You must be logged in to track lesson progress." };
+  if (!user) return { error: "Anda harus masuk untuk melacak progres pelajaran." };
 
   const { error } = await supabase.from("user_sentence_progress").upsert(
     { user_id: user.id, sentence_id: sentenceId, completed_at: new Date().toISOString() },
     { onConflict: "user_id,sentence_id" },
   );
 
-  if (error) return { error: "Could not save sentence progress." };
+  if (error) return { error: "Gagal menyimpan progres kalimat." };
   return { success: true };
 }
 
@@ -28,7 +28,7 @@ export async function deleteLesson(lessonId: string) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "You must be logged in to delete a lesson." };
+    return { error: "Anda harus masuk untuk menghapus pelajaran." };
   }
 
   // Ensure the user owns the lesson before deleting.
@@ -39,11 +39,11 @@ export async function deleteLesson(lessonId: string) {
     .single();
 
   if (fetchError || !lesson) {
-    return { error: "Lesson not found." };
+    return { error: "Pelajaran tidak ditemukan." };
   }
 
   if (lesson.user_id !== user.id) {
-    return { error: "You are not authorized to delete this lesson." };
+    return { error: "Anda tidak berwenang untuk menghapus pelajaran ini." };
   }
 
   const { error: deleteError } = await supabase
@@ -52,7 +52,7 @@ export async function deleteLesson(lessonId: string) {
     .eq("id", lessonId);
 
   if (deleteError) {
-    return { error: "Could not delete the lesson." };
+    return { error: "Gagal menghapus pelajaran." };
   }
 
   revalidatePath("/lessons");
