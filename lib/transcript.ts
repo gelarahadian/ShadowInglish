@@ -4,6 +4,63 @@ type ParsedSentence = {
   end_time: number;
 };
 
+export type TranscriptEntry = {
+  text: string;
+  /** Offset in milliseconds (as returned by youtube-transcript). */
+  offset: number;
+  /** Duration in milliseconds. */
+  duration: number;
+};
+
+const CREDIT_LINE_PATTERN = /^(translator|transcriber|reviewer|subtitles? by|produced by|edited by|www\.)\b/i;
+
+/**
+ * Merge raw caption fragments (each usually 2-5 words long) into full
+ * sentences suitable for shadowing practice. A new sentence starts when:
+ *  - the accumulated text ends with sentence-ending punctuation AND the next
+ *    fragment starts with an uppercase letter, or
+ *  - there is a silence gap longer than 2 seconds between fragments, or
+ *  - the accumulated sentence has grown too long.
+ */
+export function segmentTranscript(entries: TranscriptEntry[]): ParsedSentence[] {
+  const sentences: ParsedSentence[] = [];
+  let current: ParsedSentence | null = null;
+
+  for (let i = 0; i < entries.length; i += 1) {
+    const entry = entries[i];
+    const text = entry.text.replace(/\s+/g, " ").trim();
+    if (!text || CREDIT_LINE_PATTERN.test(text)) continue;
+
+    const startTime = entry.offset / 1000;
+    const endTime = (entry.offset + entry.duration) / 1000;
+
+    if (current === null) {
+      current = { text, start_time: startTime, end_time: endTime };
+      continue;
+    }
+
+    const gap = startTime - current.end_time;
+    const endsSentence = /[.!?…]["')\]]*$/.test(current.text);
+    const startsUppercase = /^[A-Z]/.test(text);
+    const tooLong = current.text.length > 160;
+
+    if ((endsSentence && startsUppercase) || gap > 2 || tooLong) {
+      sentences.push(current);
+      current = { text, start_time: startTime, end_time: endTime };
+    } else {
+      current = {
+        text: `${current.text} ${text}`.trim(),
+        start_time: current.start_time,
+        end_time: endTime,
+      };
+    }
+  }
+
+  if (current !== null) sentences.push(current);
+  return sentences;
+}
+
+
 export function parseTimestamp(value: string): number | null {
   const normalizedValue = value.trim().replace(",", ".");
 
