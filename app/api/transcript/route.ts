@@ -1,32 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { fetchTranscript } from "youtube-transcript";
-import {
-  YoutubeTranscriptDisabledError,
-  YoutubeTranscriptNotAvailableError,
-  YoutubeTranscriptTooManyRequestError,
-  YoutubeTranscriptVideoUnavailableError,
-} from "youtube-transcript";
 import { createClient } from "@/lib/supabase/server";
-import { parseTimestampedTranscript, segmentTranscript, TranscriptEntry } from "@/lib/transcript";
+import { parseTimestampedTranscript, segmentTranscript } from "@/lib/transcript";
 import { correctSentences } from "@/lib/correction";
-import {
-  YoutubeTranscriptNotAvailableLanguageError,
-} from "youtube-transcript";
-
-const ENGLISH_LANG_PREFERENCES = ["en", "en-US", "en-GB", "en-orig"];
-
-async function fetchTranscriptPreferringEnglish(videoId: string): Promise<TranscriptEntry[]> {
-  for (const lang of ENGLISH_LANG_PREFERENCES) {
-    try {
-      return (await fetchTranscript(videoId, { lang })) as TranscriptEntry[];
-    } catch (error) {
-      if (error instanceof YoutubeTranscriptNotAvailableLanguageError) continue;
-      throw error;
-    }
-  }
-  return (await fetchTranscript(videoId)) as TranscriptEntry[];
-}
+import { fetchYouTubeTranscript } from "@/lib/youtube-transcript";
 
 function getYouTubeVideoId(url: string) {
   try {
@@ -94,7 +71,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const entries = await fetchTranscriptPreferringEnglish(videoId);
+    const entries = await fetchYouTubeTranscript(videoId);
     if (entries.length === 0) {
       return NextResponse.json(
         { error: "Transkrip tidak ditemukan untuk video ini. Coba metode manual di bawah." },
@@ -122,19 +99,21 @@ export async function GET(request: NextRequest) {
       correctedCount,
     });
   } catch (error) {
-    if (error instanceof YoutubeTranscriptVideoUnavailableError) {
-      return NextResponse.json({ error: "Video tidak tersedia atau tidak bisa diakses." }, { status: 404 });
-    }
-    if (error instanceof YoutubeTranscriptTooManyRequestError) {
-      return NextResponse.json({ error: "Terlalu banyak permintaan ke YouTube. Tunggu sebentar lalu coba lagi." }, { status: 429 });
-    }
-    if (error instanceof YoutubeTranscriptDisabledError || error instanceof YoutubeTranscriptNotAvailableError) {
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("Error fetching YouTube transcript:", msg);
+
+    if (msg === "NO_CAPTION_TRACKS") {
       return NextResponse.json(
         { error: "Transkrip tidak tersedia untuk video ini. Gunakan metode manual di bawah." },
         { status: 404 },
       );
     }
-    console.error("Error fetching YouTube transcript:", error);
+    if (msg.startsWith("TIMEDTEXT_HTTP_")) {
+      return NextResponse.json(
+        { error: "Gagal mengambil data transkrip dari YouTube. Coba lagi nanti." },
+        { status: 502 },
+      );
+    }
     return NextResponse.json(
       { error: "Gagal mengambil transkrip. Gunakan metode manual di bawah." },
       { status: 500 },
